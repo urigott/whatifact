@@ -16,6 +16,7 @@ def _prepare_everything(
 
     # assert clf
     assert "predict_proba" in dir(clf), "clf must have a predict_proba method"
+    assert len(set(["feature_names_in_", "feature_name_", "feature_names"]).intersection(dir(clf))) > 0, "Could not find classifier's features"
 
     if "feature_names_in_" in dir(clf):  # logistic regression
         clf_features = clf.feature_names_in_
@@ -23,7 +24,9 @@ def _prepare_everything(
         clf_features = clf.feature_name_
     elif "feature_names" in dir(clf):  # XGboost
         clf_features = clf.feature_names
-
+    else: 
+        clf_features = df.columns
+    
     df = df.copy()
 
     # prepare sample_id
