@@ -127,7 +127,7 @@ def _assert_feature_settings(
                 assert (
                     v["max"] >= arr.max()
                 ), f"'max' slider value greater than maximal value in {k}"
-        if v.get("null") == False:
+        if v.get("null") is False:
             assert (
                 arr.isna().sum() == 0
             ), f"'null' was defined False for feature `{k}`, but column has NaN values"
