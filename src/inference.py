@@ -94,8 +94,7 @@ def _assert_features(
     # assertions
     assert (
         len(set(continuous_features).intersection(categorical_features)) == 0
-    ), f"Continuous and categorical features overlap: {list(set(continuous_features)
-                                                            .intersection(categorical_features))}"
+    ), f"Continuous and categorical features overlap: {list(set(continuous_features).intersection(categorical_features))}"
     assert (
         len(set(continuous_features) - set(df.columns)) == 0
     ), f"Some of continuous_features are not in dataframe: {list(set(continuous_features) - set(df.columns))}"
@@ -110,7 +109,7 @@ def _assert_features(
         or df[col].dtype.name == "category"
         or df[col].nunique() <= 10
         for col in categorical_features
-    ), "categorical_features has non-categorical features ('object', 'category', or >10 unique values)" # pylint: disable=line-too-long
+    ), "categorical_features has non-categorical features ('object', 'category', or >10 unique values)"
 
     # remove columns from data frame that are not required
     redundant_features = (
