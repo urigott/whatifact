@@ -102,7 +102,7 @@ class TestAssertions(unittest.TestCase):
                 continuous_features=self.continuous_features[:1],
             )
         self.assertIn(
-            "categorical_features include non-categorical features", str(e.exception)
+            "categorical_features has non-categorical features", str(e.exception)
         )
 
     def test_assert_features_drop_columns(self):
