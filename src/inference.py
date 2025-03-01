@@ -8,7 +8,7 @@ from collections.abc import Callable
 import pandas as pd
 import numpy as np
 
-def _prepare_everything(
+def _prepare_everything( # pylint: disable=too-many-arguments
     df: pd.DataFrame,
     clf: object,
     sample_id: str,
@@ -58,7 +58,7 @@ def _handle_sample_id(
         df.set_index(sample_id, inplace=True)
 
     # assert df's index is of a single type and has unique values
-    assert len(set([type(c) for c in df.index])) == 1, "index must be of a single type"
+    assert len({type(c) for c in df.index}) == 1, "index must be of a single type"
     assert len(set(df.index)) == df.shape[0], "indices must be unique"
 
     # define index type
@@ -98,12 +98,10 @@ def _assert_features(
                                                             .intersection(categorical_features))}"
     assert (
         len(set(continuous_features) - set(df.columns)) == 0
-    ), f"Some of continuous_features are not in dataframe: {list(set(continuous_features) - 
-                                                                 set(df.columns))}"
+    ), f"Some of continuous_features are not in dataframe: {list(set(continuous_features) - set(df.columns))}"
     assert (
         len(set(categorical_features) - set(df.columns)) == 0
-    ), f"Some of categorical_features are not in dataframe: {list(set(categorical_features) - 
-                                                                  set(df.columns))}"
+    ), f"Some of categorical_features are not in dataframe: {list(set(categorical_features) - set(df.columns))}"
     assert all(
         pd.api.types.is_numeric_dtype(df[col]) for col in continuous_features
     ), "continuous_features include non-numeric columns"
