@@ -31,6 +31,14 @@ jobs:
           source .venv/bin/activate
           uv pip install -r requirements.txt
 
+      - name: Install pylint
+        run: uv pip install pylint
+
+      - name: Run pylint on src files
+        run: |
+          pylint src/
+          pylint *.py
+      
       - name: Activate and run tests
         run: |          
           python -m unittest tests/test_inference.py
