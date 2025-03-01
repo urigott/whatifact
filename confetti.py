@@ -21,7 +21,7 @@ def confetti(
     categorical_features: list = None,
     feature_settings: dict = None,
     run_application: bool = True
-):
+): # pylint: disable=too-many-arguments
     """
     Creates a UI for counterfactual explorations, allowing users to modify input features 
     and observe changes in model predictions.
@@ -96,9 +96,9 @@ def confetti(
         title="ConFETti",
     )
 
-    def server(inputs: Inputs, output: Outputs, session: Session):
+    def server(inputs: Inputs, output: Outputs, session: Session): # pylint: disable=unused-argument
         null_checkboxes = [
-            n for n in inputs._map.keys() if n.startswith("var") and n.endswith("_null")
+            n for n in inputs._map.keys() if n.startswith("var") and n.endswith("_null") # pylint: disable=protected-access
         ]
 
         @reactive.effect
@@ -152,12 +152,13 @@ def confetti(
             # print(f'PARAMS: {params.round(1).to_dict(orient='records')}')
 
             try:
-                prediction = clf.predict_proba(params)[:, 1].item()
-                return f"PREDICTION PROBABILITY: {prediction:.3f}"
+                prediction = clf.predict_proba(params)[:, 1].item()                
 
             except Exception as e: # pylint: disable=broad-exception-caught
                 print(f"predict_proba failed with error: {str(e)}")
                 exit_app()
+
+            return f"PREDICTION PROBABILITY: {prediction:.3f}"
 
         @reactive.effect
         @reactive.event(inputs.exit)

@@ -1,0 +1,4 @@
+[MESSAGES CONTROL]
+disable=trailing-whitespace
+disable=import-error
+disable=too-many-positional-arguments
