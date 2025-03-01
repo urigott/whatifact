@@ -1,9 +1,12 @@
+"""
+Assertions and data inference functions
+"""
+
 from typing import Dict, Union, List, Tuple
 from collections.abc import Callable
 
 import pandas as pd
 import numpy as np
-
 
 def _prepare_everything(
     df: pd.DataFrame,
@@ -11,12 +14,14 @@ def _prepare_everything(
     sample_id: str,
     feature_settings: Dict[str, Dict[str, Union[int, float, bool]]],
     continuous_features: List[str],
-    categorical_features: List[str],
-):
+    categorical_features: List[str]):
 
     # assert clf
     assert "predict_proba" in dir(clf), "clf must have a predict_proba method"
-    assert len(set(["feature_names_in_", "feature_name_", "feature_names"]).intersection(dir(clf))) > 0, "Could not find classifier's features"
+    assert len(set(["feature_names_in_", 
+                    "feature_name_", 
+                    "feature_names"])
+                    .intersection(dir(clf))) > 0, "Could not find classifier's features"
 
     if "feature_names_in_" in dir(clf):  # logistic regression
         clf_features = clf.feature_names_in_
@@ -45,7 +50,6 @@ def _prepare_everything(
         _assert_feature_settings(df, feature_settings, continuous_features)
 
     return (df, sample_id_type, continuous_features, categorical_features)
-
 
 def _handle_sample_id(
     df: pd.DataFrame, sample_id: str = None
@@ -82,19 +86,24 @@ def _infer_categorical_features(df: pd.DataFrame) -> list:
 
 
 def _assert_features(
-    df: pd.DataFrame, continuous_features: list, categorical_features: list
+    df: pd.DataFrame, 
+    continuous_features: list, 
+    categorical_features: list
 ) -> pd.DataFrame:
 
     # assertions
     assert (
-        set(continuous_features).intersection(categorical_features) == set()
-    ), f"Continuous and categorical features overlap: {list(set(continuous_features).intersection(categorical_features))}"
+        len(set(continuous_features).intersection(categorical_features)) == 0
+    ), f"Continuous and categorical features overlap: {list(set(continuous_features)
+                                                            .intersection(categorical_features))}"
     assert (
-        set(continuous_features) - set(df.columns) == set()
-    ), f"Some of continuous_features are not in dataframe: {list(set(continuous_features) - set(df.columns))}"
+        len(set(continuous_features) - set(df.columns)) == 0
+    ), f"Some of continuous_features are not in dataframe: {list(set(continuous_features) - 
+                                                                 set(df.columns))}"
     assert (
-        set(categorical_features) - set(df.columns) == set()
-    ), f"Some of categorical_features are not in dataframe: {list(set(categorical_features) - set(df.columns))}"
+        len(set(categorical_features) - set(df.columns)) == 0
+    ), f"Some of categorical_features are not in dataframe: {list(set(categorical_features) - 
+                                                                  set(df.columns))}"
     assert all(
         pd.api.types.is_numeric_dtype(df[col]) for col in continuous_features
     ), "continuous_features include non-numeric columns"
@@ -103,7 +112,7 @@ def _assert_features(
         or df[col].dtype.name == "category"
         or df[col].nunique() <= 10
         for col in categorical_features
-    ), "categorical_features include non-categorical features (i.e., of type 'object', 'category', or have up to 10 unique values)"
+    ), "categorical_features has non-categorical features ('object', 'category', or >10 unique values)" # pylint: disable=line-too-long
 
     # remove columns from data frame that are not required
     redundant_features = (
@@ -112,7 +121,6 @@ def _assert_features(
     df.drop(list(redundant_features), axis=1, inplace=True)
 
     return df
-
 
 def _assert_feature_settings(
     df: pd.DataFrame,
@@ -155,7 +163,8 @@ def _calculate_step_size(arr: pd.Series, decimals: int):
     )
 
 
-def _get_sliders_params(arr, col_dict={}):
+def _get_sliders_params(arr, col_dict=None):
+    col_dict = col_dict or dict() # pylint: disable=use-dict-literal
     arr = np.array(arr)
     decimals = col_dict.get("decimals", 1)
     return {
@@ -172,7 +181,8 @@ def _get_sliders_params(arr, col_dict={}):
     }
 
 
-def _get_select_list_params(arr, col_dict={}):
+def _get_select_list_params(arr, col_dict=None):
+    col_dict = col_dict or dict() # pylint: disable=use-dict-literal
     options = arr.dropna().sort_values().astype(str).unique().tolist()
     allow_nulls = col_dict.get("null", np.any(pd.isna(arr)))
     value = arr.iloc[0]

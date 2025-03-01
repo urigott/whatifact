@@ -1,9 +1,11 @@
+"""
+Main confetti function and Shiny code
+"""
 from pathlib import Path
-import sys
 
 import pandas as pd
 import numpy as np
-from shiny import App, Inputs, Outputs, Session, render, ui, reactive, session, run_app
+from shiny import App, Inputs, Outputs, Session, render, ui, reactive, run_app
 
 from src.widgets import _set_null_in_variable, _un_null_variable
 from src.preprocessing import _get_variables_and_widgets, _update_values
@@ -11,16 +13,39 @@ from src.inference import _prepare_everything
 
 CSS_FILE = Path(__file__).parent / "css" / "style.css"
 
-
 def confetti(
     df,
     clf,
     sample_id: str = None,
-    continuous_features: list = [],
-    categorical_features: list = [],
-    feature_settings: dict = {},
-    run_application: bool = True,
+    continuous_features: list = None,
+    categorical_features: list = None,
+    feature_settings: dict = None,
+    run_application: bool = True
 ):
+    """
+    Creates a UI for counterfactual explorations, allowing users to modify input features 
+    and observe changes in model predictions.
+
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        The dataset containing the input features.
+    clf : object
+        A trained classification model that supports prediction and has a predict_proba method.
+    sample_id : str, optional
+        The identifier for a specific sample in the dataset (default is None).
+    continuous_features : list, optional
+        A list of column names representing continuous features. Will be inferenced if None.
+    categorical_features : list, optional
+        A list of column names representing categorical features. Will be inferenced if None.
+    feature_settings : dict, optional
+        A dictionary specifying constraints or custom settings for feature modifications.
+        Will be inferenced if None.
+    run_application : bool, optional
+        Whether to launch the UI application immediately (default is True), or return an App object.
+    
+    """
+
 
     # assert data, prepare date
     (df, sample_id_type, continuous_features, categorical_features) = (
@@ -30,7 +55,7 @@ def confetti(
             sample_id=sample_id,
             feature_settings=feature_settings,
             continuous_features=continuous_features,
-            categorical_features=categorical_features,
+            categorical_features=categorical_features
         )
     )
 
@@ -39,7 +64,7 @@ def confetti(
         df=df,
         continuous_features=continuous_features,
         categorical_features=categorical_features,
-        feature_settings=feature_settings,
+        feature_settings=feature_settings
     )
 
     ## SHINY APP
@@ -71,14 +96,14 @@ def confetti(
         title="ConFETti",
     )
 
-    def server(input: Inputs, output: Outputs, session: Session):
+    def server(inputs: Inputs, output: Outputs, session: Session):
         null_checkboxes = [
-            n for n in input._map.keys() if n.startswith("var") and n.endswith("_null")
+            n for n in inputs._map.keys() if n.startswith("var") and n.endswith("_null")
         ]
 
         @reactive.effect
         def checkbox_change():
-            null_checkboxes_dict = {n[:-5]: input[n]() for n in null_checkboxes}
+            null_checkboxes_dict = {n[:-5]: inputs[n]() for n in null_checkboxes}
             for var_id, null_value in null_checkboxes_dict.items():
                 if null_value:
                     _set_null_in_variable(var_id)
@@ -87,7 +112,7 @@ def confetti(
                         var_id,
                         var_dict=variables[var_id],
                         org_value=df.loc[
-                            sample_id_type(input["sample_id"]()),
+                            sample_id_type(inputs["sample_id"]()),
                             variables[var_id]["caption"],
                         ],
                     )
@@ -96,19 +121,19 @@ def confetti(
         def sync_sample_id():
             _update_values(
                 df=df,
-                sample=sample_id_type(input["sample_id"]()),
+                sample=sample_id_type(inputs["sample_id"]()),
                 variables=variables,
             )
 
         @reactive.calc
         @render.text()
         def calc_pred() -> str:
-            null_checkboxes_dict = {n[:-5]: input[n]() for n in null_checkboxes}
+            null_checkboxes_dict = {n[:-5]: inputs[n]() for n in null_checkboxes}
 
             params = pd.DataFrame(
                 {
                     v["caption"]: (
-                        [input[var_id]()]
+                        [inputs[var_id]()]
                         if not null_checkboxes_dict.get(var_id, False)
                         else [np.nan]
                     )
@@ -130,21 +155,21 @@ def confetti(
                 prediction = clf.predict_proba(params)[:, 1].item()
                 return f"PREDICTION PROBABILITY: {prediction:.3f}"
 
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-exception-caught
                 print(f"predict_proba failed with error: {str(e)}")
                 exit_app()
 
         @reactive.effect
-        @reactive.event(input.exit)
+        @reactive.event(inputs.exit)
         async def exit_app():
             await session.close()
 
     app = App(
         app_ui,
-        server,
-    )
+        server
+        )
 
     if run_application:
         run_app(app, launch_browser=True)
-    else:
-        return app
+
+    return app

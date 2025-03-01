@@ -1,8 +1,9 @@
 # python -m unittest tests/test_continuous.py
 
 import unittest
+
 import numpy as np
-import pandas as pd
+
 from src.widgets import _get_single_slider, _get_drop_down, _get_null_checkbox
 
 

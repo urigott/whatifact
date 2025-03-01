@@ -1,3 +1,7 @@
+"""
+Data preprocessing functions
+"""
+
 from typing import List, Dict, Union
 
 from shiny import ui
@@ -16,10 +20,11 @@ def _get_variables_and_widgets(
     df,
     continuous_features: List[str],
     categorical_features: List[str],
-    feature_settings: Dict[str, Dict[str, Union[int, float]]] = {},
+    feature_settings: Dict[str, Dict[str, Union[int, float]]] = None,
 ):
-    variables = {}
-    widgets = {}
+    variables = dict() # pylint: disable=use-dict-literal
+    widgets = dict() # pylint: disable=use-dict-literal
+    feature_settings = feature_settings or dict() # pylint: disable=use-dict-literal
 
     for j, col in enumerate(df.columns, start=1):
         var_id = f"var{j}"
@@ -27,13 +32,13 @@ def _get_variables_and_widgets(
 
         if col in continuous_features:
             var_dict.update(
-                **_get_sliders_params(df[col], col_dict=feature_settings.get(col, {}))
+                **_get_sliders_params(df[col], col_dict=feature_settings.get(col, dict())) # pylint: disable=use-dict-literal
             )
 
         elif col in categorical_features:
             var_dict.update(
                 **_get_select_list_params(
-                    df[col], col_dict=feature_settings.get(col, {})
+                    df[col], col_dict=feature_settings.get(col, dict()) # pylint: disable=use-dict-literal
                 )
             )
 
