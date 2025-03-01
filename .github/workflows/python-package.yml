@@ -1,3 +1,11 @@
+name: Run Python Tests
+
+on:
+  push:
+    branches:
+      - main
+    pull_request:
+      - main
 jobs:
   build:
     name: continuous-integration
@@ -21,12 +29,9 @@ jobs:
         run: uv sync --all-extras --dev
 
       - name: Activate and run tests
-        run: source ./venv/bin/activate
-          
-          # python -m unittest tests/test_inference.py
-          # python -m unittest tests/test_preprocessing.py
-          # python -m unittest tests/test_widgets.py
-          # python -m unittest tests/test_confetti.py
-
-          
-
+        run: |
+          source ./venv/bin/activate          
+          python -m unittest tests/test_inference.py
+          python -m unittest tests/test_preprocessing.py
+          python -m unittest tests/test_widgets.py
+          python -m unittest tests/test_confetti.py
