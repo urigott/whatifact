@@ -26,11 +26,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install the project
-        run: uv sync --all-extras --dev
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv pip install -r requirements.txt
 
       - name: Activate and run tests
-        run: |
-          source ./venv/bin/activate          
+        run: |          
           python -m unittest tests/test_inference.py
           python -m unittest tests/test_preprocessing.py
           python -m unittest tests/test_widgets.py
