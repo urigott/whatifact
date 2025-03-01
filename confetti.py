@@ -101,7 +101,8 @@ def confetti(df,
                     params[col] = params[col].astype(cat_dtype)
 
             params = params.astype(df.dtypes)
-            print(f'PARAMS: {params.round(1).to_dict(orient='records')}')
+            # # ONLY IN DEBUGGING MDOE
+            # print(f'PARAMS: {params.round(1).to_dict(orient='records')}')
             
             try:                
                 prediction = clf.predict_proba(params)[:, 1].item()
