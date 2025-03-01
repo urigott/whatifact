@@ -1,0 +1,14 @@
+[project]
+name = "confetti"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "lightgbm>=4.6.0",
+    "numpy>=2.2.3",
+    "pandas>=2.2.3",
+    "scikit-learn>=1.6.1",
+    "shin>=0.2.1",
+    "shiny>=1.2.1",
+]
