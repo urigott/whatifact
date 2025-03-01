@@ -37,4 +37,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with unittest
       run: |
-        unittest
+        python -m unittest tests/test_inference.py
+        python -m unittest tests/test_preprocessing.py
+        python -m unittest tests/test_widgets.py
+        python -m unittest tests/test_confetti.py
