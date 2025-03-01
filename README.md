@@ -1,5 +1,5 @@
 # ConFETti
-## a Counter Factual Exploration Tool
+## A Counter Factual Exploration Tool
 
 Counter Factual explanations are a methdology to investigate model's predictions.
 ConFETti allows data scientists to play with their population features, and find out how predictions are changed.
