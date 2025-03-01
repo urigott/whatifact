@@ -1,0 +1,41 @@
+body {    
+    /* overflow: hidden; */
+    resize: none;
+}
+
+.card {
+    background:#e6e5da ; 
+    width: 12cm; 
+    position: absolute; 
+    margin-right: 50%; 
+    transform: translate(10%, 5%);    
+}
+
+.fixed-header {
+    position: sticky;    
+    z-index: 10; /* Keep it above scrolling content */
+    border: 1px solid #2A2A2A;
+    color:black; 
+    background:#ace6e4 !important; 
+    text-align: center; 
+}
+
+
+.scrollable-card {    
+    max-height: 75vh;
+    overflow-y: scroll;
+    overflow-x: clip;
+    border: 1px solid #2A2A2A;
+    padding: 5px;
+}
+
+.row {
+    padding: 10px;    
+}
+
+.exit-button {
+    background: #8c8ceb;
+    border: 1px sold #2A2A2A;
+    cursor: pointer;
+}
+
