@@ -12,8 +12,7 @@ dependencies = [
     "lightgbm>=4.6.0",
     "numpy>=2.2.3",
     "pandas>=2.2.3",    
-    "scikit-learn>=1.6.1",
-    "shin>=0.2.1",
+    "scikit-learn>=1.6.1",    
     "shiny>=1.2.1",
 ]
 
