@@ -6,7 +6,7 @@ import numpy as np
 import lightgbm as lgb
 from sklearn.linear_model import LogisticRegression
 
-from confetti import confetti
+from confetti.confetti import confetti
 
 
 class TestConfetti(unittest.TestCase):
@@ -26,9 +26,6 @@ class TestConfetti(unittest.TestCase):
                 ),
             }
         )
-
-        self.continuous_features = ["Age", "Height", "Hb"]
-        self.categorical_features = ["Sex", "Diabetic"]
 
         # preparing data for Logisitic regression
         self.df_numerical = self.df.copy()
@@ -53,8 +50,6 @@ class TestConfetti(unittest.TestCase):
             df=self.df,
             clf=clf,
             sample_id="sample_id",
-            continuous_features=self.continuous_features,
-            categorical_features=self.categorical_features,
             run_application=False,
         )
 
@@ -87,8 +82,6 @@ class TestConfetti(unittest.TestCase):
             df=df_missing,
             clf=clf,
             sample_id="sample_id",
-            continuous_features=self.continuous_features,
-            categorical_features=self.categorical_features,
             run_application=False,
         )
 
@@ -101,8 +94,6 @@ class TestConfetti(unittest.TestCase):
             df=self.df_numerical,
             clf=clf,
             sample_id="sample_id",
-            continuous_features=self.continuous_features,
-            categorical_features=self.categorical_features,
             run_application=False,
         )
 

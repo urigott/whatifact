@@ -8,20 +8,24 @@ from collections.abc import Callable
 import pandas as pd
 import numpy as np
 
-def _prepare_everything( # pylint: disable=too-many-arguments
+
+def _prepare_everything(  # pylint: disable=too-many-arguments
     df: pd.DataFrame,
     clf: object,
     sample_id: str,
     feature_settings: Dict[str, Dict[str, Union[int, float, bool]]],
-    continuous_features: List[str],
-    categorical_features: List[str]):
+):
 
     # assert clf
     assert "predict_proba" in dir(clf), "clf must have a predict_proba method"
-    assert len(set(["feature_names_in_", 
-                    "feature_name_", 
-                    "feature_names"])
-                    .intersection(dir(clf))) > 0, "Could not find classifier's features"
+    assert (
+        len(
+            set(["feature_names_in_", "feature_name_", "feature_names"]).intersection(
+                dir(clf)
+            )
+        )
+        > 0
+    ), "Could not find classifier's features"
 
     if "feature_names_in_" in dir(clf):  # logistic regression
         clf_features = clf.feature_names_in_
@@ -29,9 +33,9 @@ def _prepare_everything( # pylint: disable=too-many-arguments
         clf_features = clf.feature_name_
     elif "feature_names" in dir(clf):  # XGboost
         clf_features = clf.feature_names
-    else: 
+    else:
         clf_features = df.columns
-    
+
     df = df.copy()
 
     # prepare sample_id
@@ -40,9 +44,32 @@ def _prepare_everything( # pylint: disable=too-many-arguments
     # remove un-needed features
     df = df[clf_features]
 
-    # infer continuous and categorical features if not provided
-    continuous_features = continuous_features or _infer_continuous_features(df)
-    categorical_features = categorical_features or _infer_categorical_features(df)
+    # infer continuous and categorical features
+    if feature_settings:
+        predefined_continuous = [
+            k for k, v in feature_settings.items() if v.get("type") == "continuous"
+        ]
+        predefined_categorical = [
+            k for k, v in feature_settings.items() if v.get("type") == "categorical"
+        ]
+    else:
+        predefined_continuous = {}
+        predefined_categorical = {}
+
+    continuous_features = list(
+        (set(_infer_continuous_features(df)) - set(predefined_categorical)).union(
+            predefined_continuous
+        )
+    )
+    print(f"Selected continuous features: {continuous_features}")
+
+    categorical_features = list(
+        (set(_infer_categorical_features(df)) - set(predefined_continuous)).union(
+            predefined_categorical
+        )
+    )
+    print(f"Selected categorical features: {categorical_features}")
+
     df = _assert_features(df, continuous_features, categorical_features)
 
     # assert feature_settings
@@ -50,6 +77,7 @@ def _prepare_everything( # pylint: disable=too-many-arguments
         _assert_feature_settings(df, feature_settings, continuous_features)
 
     return (df, sample_id_type, continuous_features, categorical_features)
+
 
 def _handle_sample_id(
     df: pd.DataFrame, sample_id: str = None
@@ -86,9 +114,7 @@ def _infer_categorical_features(df: pd.DataFrame) -> list:
 
 
 def _assert_features(
-    df: pd.DataFrame, 
-    continuous_features: list, 
-    categorical_features: list
+    df: pd.DataFrame, continuous_features: list, categorical_features: list
 ) -> pd.DataFrame:
 
     # assertions
@@ -118,6 +144,7 @@ def _assert_features(
     df.drop(list(redundant_features), axis=1, inplace=True)
 
     return df
+
 
 def _assert_feature_settings(
     df: pd.DataFrame,
@@ -161,7 +188,7 @@ def _calculate_step_size(arr: pd.Series, decimals: int):
 
 
 def _get_sliders_params(arr, col_dict=None):
-    col_dict = col_dict or dict() # pylint: disable=use-dict-literal
+    col_dict = col_dict or dict()  # pylint: disable=use-dict-literal
     arr = np.array(arr)
     decimals = col_dict.get("decimals", 1)
     return {
@@ -179,11 +206,11 @@ def _get_sliders_params(arr, col_dict=None):
 
 
 def _get_select_list_params(arr, col_dict=None):
-    col_dict = col_dict or dict() # pylint: disable=use-dict-literal
+    col_dict = col_dict or dict()  # pylint: disable=use-dict-literal
     options = arr.dropna().sort_values().astype(str).unique().tolist()
-    allow_nulls = col_dict.get("null", np.any(pd.isna(arr)))
+    allow_nulls = col_dict.get("null", any(pd.isna(arr)))
     value = arr.iloc[0]
-    value = "" if pd.isna(value) else value
+    value = "" if pd.isna(value) else str(value)
 
     return {
         "type": "categorical",

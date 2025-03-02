@@ -5,19 +5,19 @@ Shiny widgets are defined here
 import numpy as np
 from shiny import ui
 
+
 def _get_null_checkbox(v, value=False):
     return ui.column(1, ui.input_checkbox(id=v["id"] + "_null", label="", value=value))
 
 
 def _get_single_slider(v: dict):
     row = ui.row()
-    initial_empty = np.isnan(v["value"])
+    col_width = 12
 
     if v["null"]:
-        row.append(_get_null_checkbox(v, value=initial_empty))
+        initial_value = np.isnan(v["value"])
+        row.append(_get_null_checkbox(v, value=initial_value))
         col_width = 9
-    else:
-        col_width = 12
 
     row.append(
         ui.column(
@@ -27,7 +27,7 @@ def _get_single_slider(v: dict):
                 label=v["caption"],
                 min=v["min"],
                 max=v["max"],
-                value=v["value"],
+                value=float(v["value"]),
                 step=v["step"],
             ),
         )
@@ -47,4 +47,6 @@ def _set_null_in_variable(var_id):
 
 def _un_null_variable(var_id, var_dict, org_value):
     value = max(var_dict["min"], org_value)
-    ui.update_slider(var_id, min=var_dict["min"], max=var_dict["max"], value=value)
+    ui.update_slider(
+        var_id, min=var_dict["min"], max=var_dict["max"], value=float(value)
+    )

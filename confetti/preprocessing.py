@@ -7,13 +7,13 @@ from typing import List, Dict, Union
 from shiny import ui
 import pandas as pd
 
-from src.widgets import (
+from confetti.widgets import (
     _get_drop_down,
     _get_single_slider,
     _set_null_in_variable,
     _un_null_variable,
 )
-from src.inference import _get_sliders_params, _get_select_list_params
+from confetti.inference import _get_sliders_params, _get_select_list_params
 
 
 def _get_variables_and_widgets(
@@ -22,9 +22,9 @@ def _get_variables_and_widgets(
     categorical_features: List[str],
     feature_settings: Dict[str, Dict[str, Union[int, float]]] = None,
 ):
-    variables = dict() # pylint: disable=use-dict-literal
-    widgets = dict() # pylint: disable=use-dict-literal
-    feature_settings = feature_settings or dict() # pylint: disable=use-dict-literal
+    variables = dict()  # pylint: disable=use-dict-literal
+    widgets = dict()  # pylint: disable=use-dict-literal
+    feature_settings = feature_settings or dict()  # pylint: disable=use-dict-literal
 
     for j, col in enumerate(df.columns, start=1):
         var_id = f"var{j}"
@@ -32,13 +32,18 @@ def _get_variables_and_widgets(
 
         if col in continuous_features:
             var_dict.update(
-                **_get_sliders_params(df[col], col_dict=feature_settings.get(col, dict())) # pylint: disable=use-dict-literal
+                **_get_sliders_params(
+                    df[col], col_dict=feature_settings.get(col, dict())
+                )  # pylint: disable=use-dict-literal
             )
 
         elif col in categorical_features:
             var_dict.update(
                 **_get_select_list_params(
-                    df[col], col_dict=feature_settings.get(col, dict()) # pylint: disable=use-dict-literal
+                    df[col],
+                    col_dict=feature_settings.get(
+                        col, dict()
+                    ),  # pylint: disable=use-dict-literal
                 )
             )
 
@@ -68,12 +73,13 @@ def _update_values(df, sample, variables):
             if pd.isna(new_value):
                 _set_null_in_variable(var_id)
                 ui.update_checkbox(var_id + "_null", value=True)
-            else:
+            elif v["null"]:
                 _un_null_variable(var_id, variables[var_id], org_value=new_value)
-                ui.update_slider(var_id, value=new_value, min=v["min"], max=v["max"])
                 ui.update_checkbox(var_id + "_null", value=False)
+            else:
+                ui.update_slider(var_id, value=float(new_value))
 
-        if v["type"] == "categorical":
+        elif v["type"] == "categorical":
             ui.update_select(
                 id=v["id"], selected=str(new_value) if not pd.isna(new_value) else ""
             )
