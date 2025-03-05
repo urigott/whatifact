@@ -9,6 +9,7 @@ from confetti.logger import get_logger
 
 logger = get_logger()
 
+
 def _get_null_checkbox(v, value=False):
     return ui.column(1, ui.input_checkbox(id=v["id"] + "_null", label="", value=value))
 
@@ -38,20 +39,24 @@ def _get_single_slider(v: dict):
     return row
 
 
-def _get_drop_down(v):    
-    logger.info(f'CALLED _get_drop_down | {str(v)}')
-    row = ui.row()    
+def _get_drop_down(v):
+    logger.info(f"CALLED _get_drop_down | {str(v)}")
+    row = ui.row()
 
     if v["null"]:
         initial_value = v["value"] != ""
         row.append(_get_null_checkbox(v, value=initial_value))
     else:
         row.append(ui.column(1, ""))
-        
 
-    row.append(ui.column(9, ui.input_select(
-        v["id"], v["caption"], choices=v["options"], selected=v["value"]
-    )))
+    row.append(
+        ui.column(
+            9,
+            ui.input_select(
+                v["id"], v["caption"], choices=v["options"], selected=v["value"]
+            ),
+        )
+    )
 
     return row
 

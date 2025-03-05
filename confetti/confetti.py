@@ -1,6 +1,7 @@
 """
 Main confetti function and Shiny code
 """
+
 from pathlib import Path
 
 import pandas as pd
@@ -14,6 +15,7 @@ from confetti.inference import _prepare_everything
 from confetti.logger import get_logger
 
 CSS_FILE = Path(__file__).parent / "css" / "style.css"
+
 
 def confetti(
     df,
@@ -64,28 +66,22 @@ def confetti(
     app_ui = ui.page_auto(
         ui.include_css(CSS_FILE),
         ui.card(
-            ui.card_header(                
+            ui.card_header(
                 ui.row(
                     ui.input_select(
                         id="sample_id",
-                        label=sample_id or"Sample ID",
-                        choices=list(df.index.astype(str)),                        
+                        label=sample_id or "Sample ID",
+                        choices=list(df.index.astype(str)),
                     )
                 ),
-                
                 ui.div(
                     ui.row(ui.markdown("Predicted probability")),
                     ui.row(ui.output_text_verbatim("calc_pred")),
-                    class_="prediction-box"                
+                    class_="prediction-box",
                 ),
                 class_="fixed-header",
             ),
-            ui.card_body(
-                ui.div(
-                    *widgets.values(),
-                    class_="scrollable-card"
-                    )
-                ),
+            ui.card_body(ui.div(*widgets.values(), class_="scrollable-card")),
         ),
     )
 
@@ -102,7 +98,7 @@ def confetti(
         def get_null_checkboxes_dict():
             with reactive.isolate():
                 null_dict = {n[:-5]: inputs[n]() for n in null_checkboxes}
-                logger.info(f'CALLED get_null_checkboxes_dict | {str(null_dict)}')
+                logger.info(f"CALLED get_null_checkboxes_dict | {str(null_dict)}")
                 return null_dict
 
         def get_params():
@@ -110,38 +106,44 @@ def confetti(
             params_dict = {}
 
             for var_id, v in variables.items():
-                col = v['caption']
-                params_dict.update({col: [inputs[var_id]()]
-                                    if ~null_checkboxes_dict.get(var_id, False)
-                                    else [np.nan]})
-                
+                col = v["caption"]
+                params_dict.update(
+                    {
+                        col: (
+                            [inputs[var_id]()]
+                            if ~null_checkboxes_dict.get(var_id, False)
+                            else [np.nan]
+                        )
+                    }
+                )
+
                 params = pd.DataFrame(params_dict)
-                
-                if v['type'] == 'categorical' and inputs[var_id]() == "":
+
+                if v["type"] == "categorical" and inputs[var_id]() == "":
                     if null_checkboxes_dict[var_id]:
-                        ui.update_checkbox(var_id + '_null', value=False)
+                        ui.update_checkbox(var_id + "_null", value=False)
 
                     if (df[col].dtype == "category") and (params.loc[0, col] != ""):
                         cat_dtype = df[col].cat.categories.dtype
                         params[col] = params[col].astype(cat_dtype)
 
             params = params.astype(df.dtypes.replace({int: "float64"}))
-            logger.info("CALLED get_params | " + str(params.to_dict(orient='records')))
+            logger.info("CALLED get_params | " + str(params.to_dict(orient="records")))
             return params
 
         def get_active_sample_id():
             with reactive.isolate():
                 new_sample_id = sample_id_type(inputs.sample_id())
-                logger.info(f'SAMPLE_ID: {new_sample_id}')
+                logger.info(f"SAMPLE_ID: {new_sample_id}")
                 return new_sample_id
 
         state = reactive.Value()
         state.dict = get_null_checkboxes_dict()
 
         @reactive.effect
-        def checkbox_change():            
+        def checkbox_change():
             null_checkboxes_dict = {n[:-5]: inputs[n]() for n in null_checkboxes}
-            
+
             for var_id, null_value in null_checkboxes_dict.items():
 
                 if (
@@ -150,7 +152,7 @@ def confetti(
                     continue
 
                 if null_value:
-                    if variables[var_id]['type'] == 'continuous':
+                    if variables[var_id]["type"] == "continuous":
                         _enable_slider(
                             var_id,
                             var_dict=variables[var_id],
@@ -159,30 +161,32 @@ def confetti(
                             ],
                         )
                     else:
-                        ui.update_select(var_id, selected=df.loc[
+                        ui.update_select(
+                            var_id,
+                            selected=df.loc[
                                 get_active_sample_id(), variables[var_id]["caption"]
-                            ],)
-                    
+                            ],
+                        )
+
                 else:
-                    if variables[var_id]['type'] == 'continuous':
+                    if variables[var_id]["type"] == "continuous":
                         _disable_slider(var_id)
                     else:
                         ui.update_select(var_id, selected="")
 
             # refresh state dict
             state.dict = get_null_checkboxes_dict()
-            logger.info(f'CALLED checkbox_change: {state.dict}')            
+            logger.info(f"CALLED checkbox_change: {state.dict}")
 
         @reactive.effect
         def sync_sample_id():
-            logger.info('CALLED {sync_sample_id}')
+            logger.info("CALLED {sync_sample_id}")
             sample = sample_id_type(inputs["sample_id"]())
             _update_values(
                 df=df,
                 sample=sample,
                 variables=variables,
             )
-
 
         @reactive.calc
         @render.text()
@@ -194,7 +198,7 @@ def confetti(
                 assert isinstance(prediction, float)
 
             except Exception as e:  # pylint: disable=broad-exception-caught
-                logger.warning(f'ERROR calculating predictions: {str(e)}')
+                logger.warning(f"ERROR calculating predictions: {str(e)}")
                 exit_app()
 
             prediction = np.round(prediction, 3)
@@ -202,9 +206,9 @@ def confetti(
             return prediction
 
         @reactive.effect
-        @reactive.event(inputs.exit)        
+        @reactive.event(inputs.exit)
         async def exit_app():
-            logger.info('EXIT')
+            logger.info("EXIT")
             await session.close()
 
     app = App(app_ui, server)

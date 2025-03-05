@@ -1,6 +1,7 @@
 """
 Data preprocessing functions
 """
+
 from typing import List, Dict, Union
 
 from shiny import ui
@@ -16,6 +17,7 @@ from confetti.inference import _get_sliders_params, _get_select_list_params
 from confetti.logger import get_logger
 
 logger = get_logger()
+
 
 def _get_variables_and_widgets(
     df,
@@ -70,7 +72,7 @@ def _update_values(df, sample, variables):
     for var_id, v in variables.items():
         col = v["caption"]
         new_value = row.loc[sample, col]
-        logger.info(f'CALLED _update_values | VAR: {col} | NEW VALUE: {new_value}')
+        logger.info(f"CALLED _update_values | VAR: {col} | NEW VALUE: {new_value}")
         if v["type"] == "continuous":
             if pd.isna(new_value):
                 _disable_slider(var_id)
@@ -85,5 +87,5 @@ def _update_values(df, sample, variables):
             ui.update_select(
                 id=v["id"], selected=str(new_value) if ~pd.isna(new_value) else ""
             )
-            if v['null']:
+            if v["null"]:
                 ui.update_checkbox(var_id + "_null", value=~pd.isna(new_value))
