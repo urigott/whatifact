@@ -1,7 +1,6 @@
 """
 Data preprocessing functions
 """
-
 from typing import List, Dict, Union
 
 from shiny import ui
@@ -10,11 +9,13 @@ import pandas as pd
 from confetti.widgets import (
     _get_drop_down,
     _get_single_slider,
-    _set_null_in_variable,
-    _un_null_variable,
+    _disable_slider,
+    _enable_slider,
 )
 from confetti.inference import _get_sliders_params, _get_select_list_params
+from confetti.logger import get_logger
 
+logger = get_logger()
 
 def _get_variables_and_widgets(
     df,
@@ -47,6 +48,7 @@ def _get_variables_and_widgets(
                 )
             )
 
+        logger.info(f"CALLED _get_variables_and_widgets | {var_id} | {var_dict}")
         variables.update({var_id: var_dict})
         widgets.update(
             {
@@ -68,18 +70,20 @@ def _update_values(df, sample, variables):
     for var_id, v in variables.items():
         col = v["caption"]
         new_value = row.loc[sample, col]
-
+        logger.info(f'CALLED _update_values | VAR: {col} | NEW VALUE: {new_value}')
         if v["type"] == "continuous":
             if pd.isna(new_value):
-                _set_null_in_variable(var_id)
-                ui.update_checkbox(var_id + "_null", value=True)
-            elif v["null"]:
-                _un_null_variable(var_id, variables[var_id], org_value=new_value)
+                _disable_slider(var_id)
                 ui.update_checkbox(var_id + "_null", value=False)
+            elif v["null"]:
+                _enable_slider(var_id, variables[var_id], org_value=new_value)
+                ui.update_checkbox(var_id + "_null", value=True)
             else:
                 ui.update_slider(var_id, value=float(new_value))
 
         elif v["type"] == "categorical":
             ui.update_select(
-                id=v["id"], selected=str(new_value) if not pd.isna(new_value) else ""
+                id=v["id"], selected=str(new_value) if ~pd.isna(new_value) else ""
             )
+            if v['null']:
+                ui.update_checkbox(var_id + "_null", value=~pd.isna(new_value))

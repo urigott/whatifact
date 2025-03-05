@@ -1,41 +1,67 @@
-body {    
-    /* overflow: hidden; */
+body {        
     resize: none;
+    background: #f1f1f1;    
 }
 
-.card {
-    background:#e6e5da ; 
-    width: 12cm; 
+.card {    
+    overflow-x: auto;
+    min-width: 12cm;
+    background:#ebe8e8 ; 
     position: absolute; 
-    margin-right: 50%; 
-    transform: translate(10%, 5%);    
+    width: 35vw;
+    max-width: 20cm;
+    max-height: 90vh;
+    left: 35%;
+    top: 10px;
+    border: 2px solid #2A2A2A;
+    border-radius: 15px;
+    /* transform: translate(50%);     */
 }
 
 .fixed-header {
     position: sticky;    
-    z-index: 10; /* Keep it above scrolling content */
+    z-index: 10;  /* Keep it above scrolling content */
+    border: 1px solid #2A2A2A;    
+    border-radius: 15px;    
+    max-height: 25%;
+    background:#ace6e4;
+    text-align: center;     
+}
+
+.prediction-box {
+    background: #f1f1f1;
+    margin: 10px;
     border: 1px solid #2A2A2A;
-    color:black; 
-    background:#ace6e4 !important; 
-    text-align: center; 
+    border-radius: 15px;
+    max-height: 100px;
 }
 
-
-.scrollable-card {    
-    max-height: 75vh;
-    overflow-y: scroll;
-    overflow-x: clip;
+.scrollable-card {        
+    max-height: 75%;    
+    overflow-x: clip;    
     border: 1px solid #2A2A2A;
-    padding: 5px;
+    border-radius: 15px;
+    margin: 10px;    
 }
 
-.row {
-    padding: 10px;    
+
+.shiny-text-output {
+    font-size: x-large;
+    background: #f1f1f1;
+    border: 0px;
+    margin-left: 25%;
+    margin-right: 25%;
+    width: 50%;    
 }
 
-.exit-button {
-    background: #8c8ceb;
-    border: 1px sold #2A2A2A;
-    cursor: pointer;
+.shiny-input-select {
+    border-radius: 40px;        
+}
+
+
+.row {    
+    margin-top: 5px;
+    padding-left: 10px;
+    align-items: center;    
 }
 

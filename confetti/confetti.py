@@ -1,19 +1,19 @@
 """
 Main confetti function and Shiny code
 """
-
 from pathlib import Path
 
 import pandas as pd
 import numpy as np
 from shiny import App, Inputs, Outputs, Session, render, ui, reactive, run_app, session
 
-from confetti.widgets import _set_null_in_variable, _un_null_variable
+from confetti.widgets import _disable_slider, _enable_slider
 from confetti.preprocessing import _get_variables_and_widgets, _update_values
 from confetti.inference import _prepare_everything
 
-CSS_FILE = Path(__file__).parent / "css" / "style.css"
+from confetti.logger import get_logger
 
+CSS_FILE = Path(__file__).parent / "css" / "style.css"
 
 def confetti(
     df,
@@ -64,29 +64,29 @@ def confetti(
     app_ui = ui.page_auto(
         ui.include_css(CSS_FILE),
         ui.card(
-            ui.div(
-                ui.row(
-                    ui.column(9, ui.output_text_verbatim("calc_pred")),
-                    ui.column(
-                        2,
-                        ui.input_action_button(
-                            id="exit", label="X", class_="exit-button"
-                        ),
-                        title="Close ConFETti",
-                    ),
-                ),
+            ui.card_header(                
                 ui.row(
                     ui.input_select(
                         id="sample_id",
-                        label="Sample ID",
-                        choices=list(df.index.astype(str)),
+                        label=sample_id or"Sample ID",
+                        choices=list(df.index.astype(str)),                        
                     )
+                ),
+                
+                ui.div(
+                    ui.row(ui.markdown("Predicted probability")),
+                    ui.row(ui.output_text_verbatim("calc_pred")),
+                    class_="prediction-box"                
                 ),
                 class_="fixed-header",
             ),
-            ui.div(*widgets.values(), class_="scrollable-card"),
+            ui.card_body(
+                ui.div(
+                    *widgets.values(),
+                    class_="scrollable-card"
+                    )
+                ),
         ),
-        title="ConFETti",
     )
 
     def server(
@@ -101,42 +101,47 @@ def confetti(
 
         def get_null_checkboxes_dict():
             with reactive.isolate():
-                return {n[:-5]: inputs[n]() for n in null_checkboxes}
+                null_dict = {n[:-5]: inputs[n]() for n in null_checkboxes}
+                logger.info(f'CALLED get_null_checkboxes_dict | {str(null_dict)}')
+                return null_dict
 
         def get_params():
             null_checkboxes_dict = get_null_checkboxes_dict()
-            params = pd.DataFrame(
-                {
-                    v["caption"]: (
-                        [inputs[var_id]()]
-                        if not null_checkboxes_dict.get(var_id, False)
-                        else [np.nan]
-                    )
-                    for var_id, v in variables.items()
-                }
-            )
+            params_dict = {}
 
-            # Handle categorical features
-            for col in categorical_features:
-                if (df[col].dtype == "category") and (params.loc[0, col] != ""):
-                    cat_dtype = df[col].cat.categories.dtype
-                    params[col] = params[col].astype(cat_dtype)
+            for var_id, v in variables.items():
+                col = v['caption']
+                params_dict.update({col: [inputs[var_id]()]
+                                    if ~null_checkboxes_dict.get(var_id, False)
+                                    else [np.nan]})
+                
+                params = pd.DataFrame(params_dict)
+                
+                if v['type'] == 'categorical' and inputs[var_id]() == "":
+                    if null_checkboxes_dict[var_id]:
+                        ui.update_checkbox(var_id + '_null', value=False)
+
+                    if (df[col].dtype == "category") and (params.loc[0, col] != ""):
+                        cat_dtype = df[col].cat.categories.dtype
+                        params[col] = params[col].astype(cat_dtype)
 
             params = params.astype(df.dtypes.replace({int: "float64"}))
-
+            logger.info("CALLED get_params | " + str(params.to_dict(orient='records')))
             return params
 
         def get_active_sample_id():
             with reactive.isolate():
-                return sample_id_type(inputs.sample_id())
+                new_sample_id = sample_id_type(inputs.sample_id())
+                logger.info(f'SAMPLE_ID: {new_sample_id}')
+                return new_sample_id
 
         state = reactive.Value()
         state.dict = get_null_checkboxes_dict()
 
         @reactive.effect
-        def checkbox_change():
+        def checkbox_change():            
             null_checkboxes_dict = {n[:-5]: inputs[n]() for n in null_checkboxes}
-
+            
             for var_id, null_value in null_checkboxes_dict.items():
 
                 if (
@@ -145,21 +150,32 @@ def confetti(
                     continue
 
                 if null_value:
-                    _set_null_in_variable(var_id)
+                    if variables[var_id]['type'] == 'continuous':
+                        _enable_slider(
+                            var_id,
+                            var_dict=variables[var_id],
+                            org_value=df.loc[
+                                get_active_sample_id(), variables[var_id]["caption"]
+                            ],
+                        )
+                    else:
+                        ui.update_select(var_id, selected=df.loc[
+                                get_active_sample_id(), variables[var_id]["caption"]
+                            ],)
+                    
                 else:
-                    _un_null_variable(
-                        var_id,
-                        var_dict=variables[var_id],
-                        org_value=df.loc[
-                            get_active_sample_id(), variables[var_id]["caption"]
-                        ],
-                    )
+                    if variables[var_id]['type'] == 'continuous':
+                        _disable_slider(var_id)
+                    else:
+                        ui.update_select(var_id, selected="")
 
             # refresh state dict
             state.dict = get_null_checkboxes_dict()
+            logger.info(f'CALLED checkbox_change: {state.dict}')            
 
         @reactive.effect
         def sync_sample_id():
+            logger.info('CALLED {sync_sample_id}')
             sample = sample_id_type(inputs["sample_id"]())
             _update_values(
                 df=df,
@@ -167,30 +183,32 @@ def confetti(
                 variables=variables,
             )
 
+
         @reactive.calc
         @render.text()
         def calc_pred() -> str:
             params = get_params()
 
-            # # ONLY IN DEBUGGING MDOE
-            # print(f'PARAMS: {params.round(1).to_dict(orient='records')}')
-
             try:
                 prediction = clf.predict_proba(params)[:, 1].item()
+                assert isinstance(prediction, float)
 
             except Exception as e:  # pylint: disable=broad-exception-caught
-                print(f"predict_proba failed with error: {str(e)}")
+                logger.warning(f'ERROR calculating predictions: {str(e)}')
                 exit_app()
 
-            prediction_string = f"PREDICTION PROBABILITY: {prediction:.3f}"
-            return prediction_string
+            prediction = np.round(prediction, 3)
+            logger.info(f"CALLED calc_pred {prediction:.3f}")
+            return prediction
 
         @reactive.effect
-        @reactive.event(inputs.exit)
+        @reactive.event(inputs.exit)        
         async def exit_app():
+            logger.info('EXIT')
             await session.close()
 
     app = App(app_ui, server)
+    logger = get_logger()
 
     if run_application:
         run_app(app, launch_browser=True)

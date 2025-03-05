@@ -1,6 +1,9 @@
 from sklearn.datasets import fetch_openml
 import lightgbm as lgb
 
+import sys
+sys.path.insert(0, '/home/urigott/confetti/')
+
 from confetti.confetti import confetti
 
 # Load Titanic dataset
