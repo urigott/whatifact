@@ -1,8 +1,13 @@
+"""
+Logger module 
+"""
 import logging
 import sys
 
-
 def get_logger():
+    """
+    Returns a logger
+    """
 
     file_handler = logging.FileHandler(filename="confetti.log")
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
