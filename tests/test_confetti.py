@@ -3,10 +3,10 @@ import warnings
 
 import pandas as pd
 import numpy as np
-import lightgbm as lgb
+from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 
-from confetti.confetti import confetti
+from confetti import confetti
 
 
 class TestConfetti(unittest.TestCase):
@@ -43,7 +43,7 @@ class TestConfetti(unittest.TestCase):
         self.labels = (outcome > prediction_threshold).astype(int)
 
     def test_with_lgbm(self):
-        clf = lgb.LGBMClassifier(verbose=-1).fit(
+        clf = LGBMClassifier(verbose=-1).fit(
             self.df.drop("sample_id", axis=1), self.labels
         )
         _ = confetti(
@@ -75,7 +75,7 @@ class TestConfetti(unittest.TestCase):
             df_missing.isna().sum().sum(), 0
         )  # assert df_missing really has missing values
 
-        clf = lgb.LGBMClassifier(verbose=-1).fit(
+        clf = LGBMClassifier(verbose=-1).fit(
             df_missing.drop("sample_id", axis=1), self.labels
         )
         _ = confetti(
