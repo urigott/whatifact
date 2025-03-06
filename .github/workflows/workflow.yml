@@ -48,10 +48,17 @@ jobs:
       if: github.ref == 'refs/heads/dev' # Only run on pushes to the dev branch
       steps:
         - uses: actions/checkout@v4
-        - name: Set up Python
-          uses: actions/setup-python@v5
+
+        - name: Install uv and set the python version
+          uses: astral-sh/setup-uv@v5
           with:
-            python-version: '3.11' # or any python version you want to use for packaging.
+            python-version: '3.12'
+
+        - name: Install the project
+          run: |
+            uv venv
+            source .venv/bin/activate
+            uv pip install -r requirements.txt
 
         - name: Install build and twine
           run: uv pip install build twine
