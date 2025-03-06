@@ -6,10 +6,8 @@ import numpy as np
 import pandas as pd
 from shiny import ui
 
-
 def _get_null_checkbox(v, value=False):
     return ui.column(1, ui.input_checkbox(id=v["id"] + "_null", label="", value=value))
-
 
 def _get_single_slider(v: dict):
     row = ui.row()

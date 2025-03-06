@@ -1,8 +1,8 @@
-# antifact
+# whatifact
 ## A Counter Factual Exploration Tool
 
 Counter Factual explanations are a methdology to investigate model's predictions.
-antifact allows data scientists to play with their population features, and find out how predictions are changed.
+whatifact allows data scientists to play with their population features, and find out how predictions are changed.
 
 Specifically, it allows to ask "what-if" questions: 
 - What would the model predict if a record belonged to a man, instead of a woman?
@@ -13,7 +13,7 @@ Answer causal questions of the real worlds require unique design, rather than so
 
 ## Example
 
-In the most basic setting, antifact only requries the data and a classifier.
+In the most basic setting, whatifact only requries the data and a classifier.
 Everything will be selected automatically: 
 - Whether a feature is categorical or continuous
 - Should missing values be allowed
@@ -26,7 +26,7 @@ Selecting this checkbox will disable the slider, and set the value for this feat
 from sklearn.datasets import fetch_openml
 import lightgbm as lgb
 
-from antifact import antifact
+from whatifact import whatifact
 
 # Load Titanic dataset
 titanic = fetch_openml("titanic", version=1, as_frame=True)
@@ -38,10 +38,10 @@ labels = titanic.target.astype(int)
 # Train a LGBMClassifier
 clf = lgb.LGBMClassifier(verbose=0).fit(df, labels)
 
-# Running antifact
-app = antifact(df=df, clf=clf)
+# Running whatifact
+app = whatifact(df=df, clf=clf)
 
-# # Output: (Clicking on the http link will open antifact in the browser)
+# # Output: (Clicking on the http link will open whatifact in the browser)
 # INFO:     Started server process [42841]
 # INFO:     Waiting for application startup.
 # INFO:     Application startup complete.
@@ -61,7 +61,7 @@ feature_settings = {
     'sibsp': {'type': 'categorical'}
 }
 
-app = antifact(df=df, clf=clf, feature_settings=feature_settings)
+app = whatifact(df=df, clf=clf, feature_settings=feature_settings)
 ```
 
 This should solve the above behavior.
@@ -73,12 +73,12 @@ All features may contain `null` or `type` keys.
 Continuous features may also contain the `min`, `max`, `step`, and `decimals` keys. All other keys will be ignored.
 The `decimals` parameters is an integer defining the number of decimal digits for rounding purposes (default: 1).
 
-The last two parameters in antifact are `sample_id` and `run_application`.
+The last two parameters in whatifact are `sample_id` and `run_application`.
 * `sample_id` is the name of a column in `df`, that will be used in the sample selector at the top of the app. If it remains None, the index column will be used as sample_id.
 * `run_application` is a boolean (True/False, defaults to True) that run the web service to run the shiny app. If changed to False, an App object will be returned, but not run, and running the app will require `shiny run my_file.py`
 
 ## Limitations
-antifact currently works with binary prediction models only, and should support LogisticRegression, XGBoost, and LGBMClassifier.
+whatifact currently works with binary prediction models only, and should support LogisticRegression, XGBoost, and LGBMClassifier.
 
 
 

@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from antifact._widgets import _get_single_slider, _get_drop_down, _get_null_checkbox
+from whatifact._widgets import _get_single_slider, _get_drop_down, _get_null_checkbox
 
 
 class TestContinuous(unittest.TestCase):

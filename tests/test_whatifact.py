@@ -6,10 +6,10 @@ import numpy as np
 from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 
-from antifact import antifact
+from whatifact import whatifact
 
 
-class TestAntifact(unittest.TestCase):
+class TestWhatifact(unittest.TestCase):
     def setUp(self):
         n = 500
         self.df = pd.DataFrame(
@@ -46,7 +46,7 @@ class TestAntifact(unittest.TestCase):
         clf = LGBMClassifier(verbose=-1).fit(
             self.df.drop("sample_id", axis=1), self.labels
         )
-        _ = antifact(
+        _ = whatifact(
             df=self.df,
             clf=clf,
             sample_id="sample_id",
@@ -78,7 +78,7 @@ class TestAntifact(unittest.TestCase):
         clf = LGBMClassifier(verbose=-1).fit(
             df_missing.drop("sample_id", axis=1), self.labels
         )
-        _ = antifact(
+        _ = whatifact(
             df=df_missing,
             clf=clf,
             sample_id="sample_id",
@@ -90,7 +90,7 @@ class TestAntifact(unittest.TestCase):
         clf = LogisticRegression(verbose=0).fit(
             self.df_numerical.drop("sample_id", axis=1), self.labels
         )
-        _ = antifact(
+        _ = whatifact(
             df=self.df_numerical,
             clf=clf,
             sample_id="sample_id",

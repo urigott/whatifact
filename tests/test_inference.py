@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 
 
-from antifact._inference import (
+from whatifact._inference import (
     _calculate_step_size,
     _calculate_min_max_value,
     _handle_sample_id,

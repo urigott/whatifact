@@ -1,20 +1,20 @@
 """
-Main antifact function and Shiny code
+Main whatifact function and Shiny code
 """
 
 from pathlib import Path
 
 from shiny import App, Inputs, Outputs, Session, ui, run_app
 
-from antifact._widgets import _get_card_header
-from antifact._utilities import _get_variables_and_widgets
-from antifact._inference import _prepare_everything
-from antifact._server import antifact_server
+from whatifact._widgets import _get_card_header
+from whatifact._utilities import _get_variables_and_widgets
+from whatifact._inference import _prepare_everything
+from whatifact._server import whatifact_server
 
 CSS_FILE = Path(__file__).parent / "resources" / "style.css"
 
 
-def antifact(
+def whatifact(
     df,
     clf,
     sample_id: str = None,
@@ -68,7 +68,7 @@ def antifact(
     )
 
     def app_server(inputs: Inputs, outputs: Outputs, session: Session):
-        antifact_server(inputs, outputs, session, variables, sample_id_type, df, clf)
+        whatifact_server(inputs, outputs, session, variables, sample_id_type, df, clf)
 
     app = App(app_ui, app_server)
 

@@ -7,13 +7,13 @@ from typing import List, Dict, Union
 from shiny import ui
 import pandas as pd
 
-from antifact._widgets import (
+from whatifact._widgets import (
     _get_drop_down,
     _get_single_slider,
     _disable_slider,
     _enable_slider,
 )
-from antifact._inference import _get_sliders_params, _get_select_list_params
+from whatifact._inference import _get_sliders_params, _get_select_list_params
 
 
 def _get_variables_and_widgets(

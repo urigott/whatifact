@@ -6,11 +6,11 @@ from shiny import ui, reactive, Inputs, Outputs, Session, render
 import numpy as np
 import pandas as pd
 
-from antifact._utilities import _disable_slider, _enable_slider
-from antifact._utilities import _update_values
+from whatifact._utilities import _disable_slider, _enable_slider
+from whatifact._utilities import _update_values
 
 
-def antifact_server(
+def whatifact_server(
     inputs: Inputs,
     output: Outputs,
     session: Session,

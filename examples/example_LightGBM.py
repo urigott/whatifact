@@ -1,7 +1,7 @@
 from sklearn.datasets import fetch_openml
 import lightgbm as lgb
 
-from antifact.antifact import antifact
+from whatifact.whatifact import whatifact
 
 # Load Titanic dataset
 titanic = fetch_openml("titanic", version=1, as_frame=True)
@@ -21,5 +21,5 @@ feature_settings = {
 
 }
 
-# Running antifact
-app = antifact(df=df, clf=clf, feature_settings=feature_settings)
+# Running whatifact
+app = whatifact(df=df, clf=clf, feature_settings=feature_settings)
