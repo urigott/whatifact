@@ -6,11 +6,10 @@ import numpy as np
 from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 
-# from confetti 
 from antifact import antifact
 
 
-class TestConfetti(unittest.TestCase):
+class TestAntifact(unittest.TestCase):
     def setUp(self):
         n = 500
         self.df = pd.DataFrame(

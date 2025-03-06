@@ -15,6 +15,7 @@ from antifact._widgets import (
 )
 from antifact._inference import _get_sliders_params, _get_select_list_params
 
+
 def _get_variables_and_widgets(
     df,
     continuous_features: List[str],
@@ -67,7 +68,7 @@ def _update_values(df, sample, variables):
     for var_id, v in variables.items():
         col = v["caption"]
         new_value = row.loc[sample, col]
-        
+
         if v["type"] == "continuous":
             if pd.isna(new_value):
                 _disable_slider(var_id)
@@ -84,4 +85,3 @@ def _update_values(df, sample, variables):
             )
             if v["null"]:
                 ui.update_checkbox(var_id + "_null", value=~pd.isna(new_value))
-                

@@ -1,10 +1,7 @@
 from sklearn.datasets import fetch_openml
 import lightgbm as lgb
 
-import sys
-sys.path.insert(0, '/home/urigott/confetti/')
-
-from antifact.antifact import confetti
+from antifact.antifact import antifact
 
 # Load Titanic dataset
 titanic = fetch_openml("titanic", version=1, as_frame=True)
@@ -24,5 +21,5 @@ feature_settings = {
 
 }
 
-# Running confetti
-app = confetti(df=df, clf=clf, feature_settings=feature_settings)
+# Running antifact
+app = antifact(df=df, clf=clf, feature_settings=feature_settings)

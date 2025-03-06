@@ -4,9 +4,7 @@ Main antifact function and Shiny code
 
 from pathlib import Path
 
-import pandas as pd
-import numpy as np
-from shiny import App, Inputs, Outputs, Session, render, ui, reactive, run_app, session
+from shiny import App, Inputs, Outputs, Session, ui, run_app
 
 from antifact._widgets import _get_card_header
 from antifact._utilities import _get_variables_and_widgets
@@ -69,8 +67,8 @@ def antifact(
         ),
     )
 
-    def app_server(inputs, outputs, session):
-        antifact_server (inputs, outputs, session, variables, sample_id_type)
+    def app_server(inputs: Inputs, outputs: Outputs, session: Session):
+        antifact_server(inputs, outputs, session, variables, sample_id_type, df, clf)
 
     app = App(app_ui, app_server)
 
