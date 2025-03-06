@@ -20,4 +20,4 @@ dependencies = [
 packages = ["antifact"]
 
 [tool.setuptools.package-data]
-confetti = ["resources/*.*"]
+antifact = ["resources/*.*"]
