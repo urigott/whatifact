@@ -45,7 +45,7 @@ jobs:
     name: Publish to TestPyPI
     runs-on: ubuntu-latest
     needs: build # ensure build job completes successfully
-    if: github.ref == 'refs/heads/dev'
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'dev'
     steps:
       - uses: actions/checkout@v4
 
@@ -75,8 +75,8 @@ jobs:
   publish-to-pypi:
     name: Publish to PyPI
     runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'main'    
+    needs: build    
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     steps:
       - uses: actions/checkout@v4
 
@@ -101,3 +101,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+          repository_url: https://upload.pypi.org/
