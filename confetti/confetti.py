@@ -14,7 +14,7 @@ from confetti.inference import _prepare_everything
 
 from confetti.logger import get_logger
 
-CSS_FILE = Path(__file__).parent / "css" / "style.css"
+CSS_FILE = Path(__file__).parent / "resources" / "style.css"
 
 
 def confetti(
@@ -63,22 +63,24 @@ def confetti(
     )
 
     ## SHINY APP
-    app_ui = ui.page_auto(
+    app_ui = ui.page_fluid(
         ui.include_css(CSS_FILE),
         ui.card(
             ui.card_header(
-                ui.row(
+                ui.div(
                     ui.input_select(
                         id="sample_id",
                         label=sample_id or "Sample ID",
-                        choices=list(df.index.astype(str)),
-                    )
+                        choices=list(df.index.astype(str))
+                    ), 
+                    class_='center-select'
                 ),
-                ui.div(
-                    ui.row(ui.markdown("Predicted probability")),
+                ui.div("Predicted probability",                    
                     ui.row(ui.output_text_verbatim("calc_pred")),
                     class_="prediction-box",
                 ),
+                # ui.input_action_button(id='revert', label='⟳')
+                
                 class_="fixed-header",
             ),
             ui.card_body(ui.div(*widgets.values(), class_="scrollable-card")),
@@ -178,7 +180,7 @@ def confetti(
             state.dict = get_null_checkboxes_dict()
             logger.info(f"CALLED checkbox_change: {state.dict}")
 
-        @reactive.effect
+        @reactive.effect        
         def sync_sample_id():
             logger.info("CALLED {sync_sample_id}")
             sample = sample_id_type(inputs["sample_id"]())
@@ -188,6 +190,18 @@ def confetti(
                 variables=variables,
             )
 
+        @reactive.effect
+        @reactive.event(inputs.revert)
+        def revert_changes():
+            logger.info("CALLED {revert_changes}")
+            sample = sample_id_type(inputs["sample_id"]())
+            _update_values(
+                df=df,
+                sample=sample,
+                variables=variables,
+            )
+
+        
         @reactive.calc
         @render.text()
         def calc_pred() -> str:

@@ -9,8 +9,10 @@ description = "A counter factual exploration tool"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "lightgbm>=4.6.0",
     "numpy>=2.2.3",
     "pandas>=2.2.3",
+    "scikit-learn>=1.6.1",
     "shiny>=1.2.1",
 ]
 
@@ -18,4 +20,4 @@ dependencies = [
 packages = ["confetti"]
 
 [tool.setuptools.package-data]
-confetti = ["css/*.css"]
+confetti = ["resources/*.*"]

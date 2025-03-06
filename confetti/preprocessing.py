@@ -89,3 +89,4 @@ def _update_values(df, sample, variables):
             )
             if v["null"]:
                 ui.update_checkbox(var_id + "_null", value=~pd.isna(new_value))
+                

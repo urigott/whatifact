@@ -1,6 +1,5 @@
 body {        
     resize: none;
-    background: #f1f1f1;    
 }
 
 .card {    
@@ -12,7 +11,7 @@ body {
     max-width: 20cm;
     max-height: 90vh;
     left: 35%;
-    top: 10px;
+    top: 5px;
     border: 2px solid #2A2A2A;
     border-radius: 15px;
     /* transform: translate(50%);     */
@@ -24,16 +23,14 @@ body {
     border: 1px solid #2A2A2A;    
     border-radius: 15px;    
     max-height: 25%;
-    background:#ace6e4;
+    background:#dbf3f3;
     text-align: center;     
 }
 
 .prediction-box {
-    background: #f1f1f1;
-    margin: 10px;
-    border: 1px solid #2A2A2A;
-    border-radius: 15px;
-    max-height: 100px;
+    background: #dbf3f3;
+    margin: 5px;
+    max-height: 80px;
 }
 
 .scrollable-card {        
@@ -41,27 +38,34 @@ body {
     overflow-x: clip;    
     border: 1px solid #2A2A2A;
     border-radius: 15px;
-    margin: 10px;    
+    margin: 5px;    
 }
 
 
 .shiny-text-output {
     font-size: x-large;
-    background: #f1f1f1;
+    background: #dbf3f3;
     border: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
     margin-left: 25%;
     margin-right: 25%;
-    width: 50%;    
+    padding: 0px;
+    width: 50%;
+    overflow-y: hidden;
 }
 
 .shiny-input-select {
     border-radius: 40px;        
 }
 
-
 .row {    
-    margin-top: 5px;
     padding-left: 10px;
     align-items: center;    
 }
 
+.center-select {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
