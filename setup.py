@@ -1,8 +1,12 @@
 from setuptools import setup, find_packages
+import tomli
+
+with open('pyproject.toml', 'rb') as f:
+    version = tomli.load(f)['project']['version']
 
 setup(
     name='whatifact',
-    version='0.1.0',
+    version=version,
     packages=find_packages(),
     test_suite='tests',
     url='http://github.com/urigott/whatifact',

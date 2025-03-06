@@ -6,3 +6,4 @@ pylint==3.3.4
 scikit-learn>=1.5.0
 setuptools==75.8.2
 shiny>=1.0.0
+tomli
