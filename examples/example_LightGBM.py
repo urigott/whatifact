@@ -4,7 +4,7 @@ import lightgbm as lgb
 import sys
 sys.path.insert(0, '/home/urigott/confetti/')
 
-from confetti.confetti import confetti
+from antifact.antifact import confetti
 
 # Load Titanic dataset
 titanic = fetch_openml("titanic", version=1, as_frame=True)

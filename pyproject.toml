@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "confetti"
+name = "antifact"
 version = "0.1.0"
 description = "A counter factual exploration tool"
 readme = "README.md"
@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["confetti"]
+packages = ["antifact"]
 
 [tool.setuptools.package-data]
 confetti = ["resources/*.*"]

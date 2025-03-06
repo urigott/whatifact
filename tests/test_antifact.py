@@ -6,7 +6,8 @@ import numpy as np
 from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 
-from confetti import confetti
+# from confetti 
+from antifact import antifact
 
 
 class TestConfetti(unittest.TestCase):
@@ -46,7 +47,7 @@ class TestConfetti(unittest.TestCase):
         clf = LGBMClassifier(verbose=-1).fit(
             self.df.drop("sample_id", axis=1), self.labels
         )
-        _ = confetti(
+        _ = antifact(
             df=self.df,
             clf=clf,
             sample_id="sample_id",
@@ -78,7 +79,7 @@ class TestConfetti(unittest.TestCase):
         clf = LGBMClassifier(verbose=-1).fit(
             df_missing.drop("sample_id", axis=1), self.labels
         )
-        _ = confetti(
+        _ = antifact(
             df=df_missing,
             clf=clf,
             sample_id="sample_id",
@@ -90,7 +91,7 @@ class TestConfetti(unittest.TestCase):
         clf = LogisticRegression(verbose=0).fit(
             self.df_numerical.drop("sample_id", axis=1), self.labels
         )
-        _ = confetti(
+        _ = antifact(
             df=self.df_numerical,
             clf=clf,
             sample_id="sample_id",

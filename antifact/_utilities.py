@@ -7,17 +7,13 @@ from typing import List, Dict, Union
 from shiny import ui
 import pandas as pd
 
-from confetti.widgets import (
+from antifact._widgets import (
     _get_drop_down,
     _get_single_slider,
     _disable_slider,
     _enable_slider,
 )
-from confetti.inference import _get_sliders_params, _get_select_list_params
-from confetti.logger import get_logger
-
-logger = get_logger()
-
+from antifact._inference import _get_sliders_params, _get_select_list_params
 
 def _get_variables_and_widgets(
     df,
@@ -50,7 +46,6 @@ def _get_variables_and_widgets(
                 )
             )
 
-        logger.info(f"CALLED _get_variables_and_widgets | {var_id} | {var_dict}")
         variables.update({var_id: var_dict})
         widgets.update(
             {
@@ -72,7 +67,7 @@ def _update_values(df, sample, variables):
     for var_id, v in variables.items():
         col = v["caption"]
         new_value = row.loc[sample, col]
-        logger.info(f"CALLED _update_values | VAR: {col} | NEW VALUE: {new_value}")
+        
         if v["type"] == "continuous":
             if pd.isna(new_value):
                 _disable_slider(var_id)
