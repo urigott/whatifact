@@ -1,0 +1,71 @@
+body {        
+    resize: none;
+}
+
+.card {    
+    overflow-x: auto;
+    min-width: 12cm;
+    background:#ebe8e8 ; 
+    position: absolute; 
+    width: 35vw;
+    max-width: 20cm;
+    max-height: 90vh;
+    left: 35%;
+    top: 5px;
+    border: 2px solid #2A2A2A;
+    border-radius: 15px;
+    /* transform: translate(50%);     */
+}
+
+.fixed-header {
+    position: sticky;    
+    z-index: 10;  /* Keep it above scrolling content */
+    border: 1px solid #2A2A2A;    
+    border-radius: 15px;    
+    max-height: 25%;
+    background:#dbf3f3;
+    text-align: center;     
+}
+
+.prediction-box {
+    background: #dbf3f3;
+    margin: 5px;
+    max-height: 80px;
+}
+
+.scrollable-card {        
+    max-height: 75%;    
+    overflow-x: clip;    
+    border: 1px solid #2A2A2A;
+    border-radius: 15px;
+    margin: 5px;    
+}
+
+
+.shiny-text-output {
+    font-size: x-large;
+    background: #dbf3f3;
+    border: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 25%;
+    margin-right: 25%;
+    padding: 0px;
+    width: 50%;
+    overflow-y: hidden;
+}
+
+.shiny-input-select {
+    border-radius: 40px;        
+}
+
+.row {    
+    padding-left: 10px;
+    align-items: center;    
+}
+
+.center-select {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

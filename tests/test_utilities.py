@@ -4,7 +4,7 @@ from string import ascii_letters
 import numpy as np
 import pandas as pd
 
-from src.preprocessing import _get_variables_and_widgets, _update_values
+from antifact._utilities import _get_variables_and_widgets, _update_values
 
 
 class TestPreprocessing(unittest.TestCase):

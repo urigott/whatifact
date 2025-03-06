@@ -1,5 +1,9 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "confetti"
+name = "antifact"
 version = "0.1.0"
 description = "A counter factual exploration tool"
 readme = "README.md"
@@ -7,8 +11,13 @@ requires-python = ">=3.10"
 dependencies = [
     "lightgbm>=4.6.0",
     "numpy>=2.2.3",
-    "pandas>=2.2.3",    
+    "pandas>=2.2.3",
     "scikit-learn>=1.6.1",
-    "shin>=0.2.1",
     "shiny>=1.2.1",
 ]
+
+[tool.setuptools]
+packages = ["antifact"]
+
+[tool.setuptools.package-data]
+antifact = ["resources/*.*"]

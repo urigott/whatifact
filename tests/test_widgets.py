@@ -1,10 +1,8 @@
-# python -m unittest tests/test_continuous.py
-
 import unittest
 
 import numpy as np
 
-from src.widgets import _get_single_slider, _get_drop_down, _get_null_checkbox
+from antifact._widgets import _get_single_slider, _get_drop_down, _get_null_checkbox
 
 
 class TestContinuous(unittest.TestCase):

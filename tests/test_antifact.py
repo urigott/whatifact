@@ -3,13 +3,13 @@ import warnings
 
 import pandas as pd
 import numpy as np
-import lightgbm as lgb
+from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 
-from confetti import confetti
+from antifact import antifact
 
 
-class TestConfetti(unittest.TestCase):
+class TestAntifact(unittest.TestCase):
     def setUp(self):
         n = 500
         self.df = pd.DataFrame(
@@ -27,9 +27,6 @@ class TestConfetti(unittest.TestCase):
             }
         )
 
-        self.continuous_features = ["Age", "Height", "Hb"]
-        self.categorical_features = ["Sex", "Diabetic"]
-
         # preparing data for Logisitic regression
         self.df_numerical = self.df.copy()
         self.df_numerical["Sex"] = (
@@ -46,15 +43,13 @@ class TestConfetti(unittest.TestCase):
         self.labels = (outcome > prediction_threshold).astype(int)
 
     def test_with_lgbm(self):
-        clf = lgb.LGBMClassifier(verbose=-1).fit(
+        clf = LGBMClassifier(verbose=-1).fit(
             self.df.drop("sample_id", axis=1), self.labels
         )
-        _ = confetti(
+        _ = antifact(
             df=self.df,
             clf=clf,
             sample_id="sample_id",
-            continuous_features=self.continuous_features,
-            categorical_features=self.categorical_features,
             run_application=False,
         )
 
@@ -80,15 +75,13 @@ class TestConfetti(unittest.TestCase):
             df_missing.isna().sum().sum(), 0
         )  # assert df_missing really has missing values
 
-        clf = lgb.LGBMClassifier(verbose=-1).fit(
+        clf = LGBMClassifier(verbose=-1).fit(
             df_missing.drop("sample_id", axis=1), self.labels
         )
-        _ = confetti(
+        _ = antifact(
             df=df_missing,
             clf=clf,
             sample_id="sample_id",
-            continuous_features=self.continuous_features,
-            categorical_features=self.categorical_features,
             run_application=False,
         )
 
@@ -97,12 +90,10 @@ class TestConfetti(unittest.TestCase):
         clf = LogisticRegression(verbose=0).fit(
             self.df_numerical.drop("sample_id", axis=1), self.labels
         )
-        _ = confetti(
+        _ = antifact(
             df=self.df_numerical,
             clf=clf,
             sample_id="sample_id",
-            continuous_features=self.continuous_features,
-            categorical_features=self.categorical_features,
             run_application=False,
         )
 

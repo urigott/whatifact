@@ -1,10 +1,11 @@
-name: Run Python Tests
+name: Verify antifact
 
 on:
   push:
     branches:
-      - main
-    pull_request:
+      - '**'
+  pull_request:
+    branches:
       - main
 jobs:
   build:
@@ -34,14 +35,8 @@ jobs:
       - name: Install pylint
         run: uv pip install pylint
 
-      - name: Run pylint on src files
-        run: |
-          pylint --fail-under=7.5 src/
-          pylint --fail-under=7.5 *.py
+      - name: Run pylint
+        run: pylint --fail-under=7.5 antifact/          
       
       - name: Activate and run tests
-        run: |          
-          python -m unittest tests/test_inference.py
-          python -m unittest tests/test_preprocessing.py
-          python -m unittest tests/test_widgets.py
-          python -m unittest tests/test_confetti.py
+        run: python -m unittest discover tests
