@@ -2,7 +2,11 @@ name: Verify whatifact
 on:
   push:
     branches:
-      - '**'  
+      - '**'
+  pull_request:
+    branches:
+      - dev
+      - main
 jobs:
   build:
     name: continuous-integration
@@ -38,11 +42,42 @@ jobs:
       - name: Activate and run tests
         run: python -m unittest discover tests
 
-  publish:
+  publish-test:
     name: Publish
-    runs-on: ubuntu-latest
     needs: build # ensure build job completes successfully
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest        
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv pip install -r requirements.txt
+
+      - name: Install build and twine
+        run: uv pip install build twine
+
+      - name: Build package
+        run: uv build      
+
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+
+  publish-pypi:
+    name: Publish
+    needs: build # ensure build job completes successfully
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest        
     steps:
       - uses: actions/checkout@v4
 
@@ -63,21 +98,14 @@ jobs:
       - name: Build package
         run: uv build
 
-      - name: Determine PyPI repository
-        id: pypi_target
-        run: |
-          if [[ "${{ github.base_ref }}" == "main" ]]; then
-            echo "repo_url=  https://upload.pypi.org/legacy/" >> $GITHUB_ENV
-            echo "pypi_token=${{ secrets.PYPI_API_TOKEN }}" >> $GITHUB_ENV
-            
-          elif [[ "${{ github.base_ref }}" == "dev" ]]; then
-            echo "repo_url=https://test.pypi.org/legacy/" >> $GITHUB_ENV
-            echo "pypi_token=${{ secrets.TEST_PYPI_API_TOKEN }}" >> $GITHUB_ENV
-          
-          fi # closes the if-elif statement
-
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: ${{ env.pypi_token }}
-          repository-url: ${{ env.repo_url }}
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          repository-url: https://upload.pypi.org/legacy/
+        
+          
+          
+        
+        
+        
