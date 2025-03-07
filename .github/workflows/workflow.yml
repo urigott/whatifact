@@ -5,6 +5,7 @@ on:
       - '**'
   pull_request:
     branches:
+      - dev
       - main
 jobs:
   build:
@@ -41,11 +42,11 @@ jobs:
       - name: Activate and run tests
         run: python -m unittest discover tests
 
-  publish-to-testpypi:
-    name: Publish to TestPyPI
-    runs-on: ubuntu-latest
+  publish-test:
+    name: Publish-test
     needs: build # ensure build job completes successfully
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'dev'
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest        
     steps:
       - uses: actions/checkout@v4
 
@@ -54,7 +55,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install the project
+      - name: Install dependencies
         run: |
           uv venv
           source .venv/bin/activate
@@ -64,19 +65,19 @@ jobs:
         run: uv pip install build twine
 
       - name: Build package
-        run: uv build
+        run: uv build      
 
-      - name: Publish package to TestPyPI
+      - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: ${{secrets.TEST_PYPI_API_TOKEN}}
-          repository_url: https://test.pypi.org/legacy/
-  
-  publish-to-pypi:
-    name: Publish to PyPI
-    runs-on: ubuntu-latest
-    needs: build    
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+
+  publish-pypi:
+    name: Publish-to-PyPi
+    needs: build # ensure build job completes successfully
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest        
     steps:
       - uses: actions/checkout@v4
 
@@ -85,7 +86,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install the project
+      - name: Install dependencies
         run: |
           uv venv
           source .venv/bin/activate
@@ -97,8 +98,8 @@ jobs:
       - name: Build package
         run: uv build
 
-      - name: Publish package to PyPI
+      - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
-          repository_url: https://upload.pypi.org/
+          repository-url: https://upload.pypi.org/legacy/

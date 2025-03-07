@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "whatifact"
 description = "Counter factual exploration utility"
 authors = [{name = "Uri Gottlieb", email = "urigott@gmail.com"}]
-version = "0.1.4"
+version = "0.1.1"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
