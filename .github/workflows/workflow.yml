@@ -71,11 +71,11 @@ jobs:
         id: pypi_target
         run: |
           if [[ "${{ github.base_ref }}" == "main" ]]; then
-            echo "repo_url=https://upload.pypi.org/" >> $GITHUB_ENV
+            echo "repo_url=  https://upload.pypi.org/legacy/" >> $GITHUB_ENV
             echo "pypi_token=${{ secrets.PYPI_API_TOKEN }}" >> $GITHUB_ENV
             
           elif [[ "${{ github.base_ref }}" == "dev" ]]; then
-            echo "repo_url=https://test.pypi.org/" >> $GITHUB_ENV
+            echo "repo_url=https://test.pypi.org/legacy/" >> $GITHUB_ENV
             echo "pypi_token=${{ secrets.TEST_PYPI_API_TOKEN }}" >> $GITHUB_ENV
           
           fi # closes the if-elif statement
@@ -85,3 +85,4 @@ jobs:
         with:
           password: ${{ env.pypi_token }}
           repository_url: ${{ env.repo_url }}
+  
