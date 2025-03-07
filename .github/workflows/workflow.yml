@@ -43,7 +43,7 @@ jobs:
         run: python -m unittest discover tests
 
   publish-test:
-    name: Publish
+    name: Publish-test
     needs: build # ensure build job completes successfully
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest        
@@ -74,7 +74,7 @@ jobs:
           repository-url: https://test.pypi.org/legacy/
 
   publish-pypi:
-    name: Publish
+    name: Publish-to-PyPi
     needs: build # ensure build job completes successfully
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest        
