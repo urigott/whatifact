@@ -47,7 +47,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build # ensure build job completes successfully
     if: github.event_name == 'pull_request'  # Only runs on PRs
-
     steps:
       - uses: actions/checkout@v4
 
