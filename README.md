@@ -79,6 +79,3 @@ The last two parameters in whatifact are `sample_id` and `run_application`.
 
 ## Limitations
 whatifact currently works with binary prediction models only, and should support LogisticRegression, XGBoost, and LGBMClassifier.
-
-
-

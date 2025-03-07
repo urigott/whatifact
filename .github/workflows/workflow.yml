@@ -46,10 +46,14 @@ jobs:
     name: Publish-test
     needs: build # ensure build job completes successfully
     if: github.ref == 'refs/heads/dev'
-    runs-on: ubuntu-latest        
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi-test
+      url: https://test.pypi.org/p/${{ github.event.repository.name }}
+    permissions:
+      id-token: write
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v3
       - name: Install uv and set the python version
         uses: astral-sh/setup-uv@v5
         with:
@@ -64,14 +68,10 @@ jobs:
       - name: Install build and twine
         run: uv pip install build twine
 
-      - name: Build package
-        run: uv build      
-
-      - name: Publish package
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository-url: https://test.pypi.org/legacy/
+      - name: Build and publish
+        run: |
+          uv build      
+          python -m twine upload --verbose --repository testpypi dist/*
 
   publish-pypi:
     name: Publish-to-PyPi

@@ -7,7 +7,7 @@ with open('pyproject.toml', 'rb') as f:
 setup(
     name='whatifact',
     version=version,
-    packages=find_packages(),
+    packages=find_packages() + ['whatifact.resources'],
     test_suite='tests',
     url='http://github.com/urigott/whatifact',
     author_email='urigott@gmail.com',
