@@ -77,6 +77,8 @@ jobs:
           elif [[ "${{ github.base_ref }}" == "dev" ]]; then
             echo "repo_url=https://test.pypi.org/" >> $GITHUB_ENV
             echo "pypi_token=${{ secrets.TEST_PYPI_API_TOKEN }}" >> $GITHUB_ENV
+          
+          fi # closes the if-elif statement
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
