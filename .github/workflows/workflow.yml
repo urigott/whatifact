@@ -2,11 +2,7 @@ name: Verify whatifact
 on:
   push:
     branches:
-      - '**'
-  pull_request:
-    branches:
-      - main
-      - dev
+      - '**'  
 jobs:
   build:
     name: continuous-integration
@@ -46,7 +42,7 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     needs: build # ensure build job completes successfully
-    if: github.event_name == 'pull_request'  # Only runs on PRs
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v4
 
@@ -84,4 +80,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ env.pypi_token }}
-          repository_url: ${{ env.repo_url }}
+          repository-url: ${{ env.repo_url }}
