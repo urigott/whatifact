@@ -71,7 +71,7 @@ jobs:
       - name: Build and publish
         run: |
           uv build      
-          twine upload --repository testpypi dist/*
+          python -m twine upload --verbose --repository testpypi dist/*
 
   publish-pypi:
     name: Publish-to-PyPi
