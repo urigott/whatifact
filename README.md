@@ -20,7 +20,7 @@ Everything will be selected automatically:
 - How to set-up the sliders for continuous features
 
 You will notice that some sliders have a little checkbox on their left. 
-Selecting this checkbox will disable the slider, and set the value for this feature as null.
+Un-selecting this checkbox will disable the slider / make an empty selection in a drop-list widget, and will consider this feature to be a missing value.
 
 ```{python}
 from sklearn.datasets import fetch_openml
@@ -67,7 +67,7 @@ app = whatifact(df=df, clf=clf, feature_settings=feature_settings)
 This should solve the above behavior.
 `feature_settings` is a dictionary, with column names as keys and dicionaries as values. 
 All features may contain `null` or `type` keys.
-* `null`: a boolearn (True/False) to state whether the feature be null (i.e., null-checkbox for continuous features, an empty selection for categorical features).
+* `null`: a boolearn (True/False) to state whether the feature can have null values.
 * `type`: 'continuous' or 'categorical' - manually defining the feature type.
 
 Continuous features may also contain the `min`, `max`, `step`, and `decimals` keys. All other keys will be ignored.
