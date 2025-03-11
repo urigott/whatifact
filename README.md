@@ -11,6 +11,23 @@ Specifically, it allows to ask "what-if" questions:
 It should be noted that this tool can help assess the causal questions of the *model's prediction* - but not the causal questions of the real world!
 Answer causal questions of the real worlds require unique design, rather than some UI tool...
 
+## Installation
+
+The source code can be found on GitHub at: https://github.com/urigott/whatifact
+
+You can install the latest released version of `whatifact` from the [Python Package Index (PyPI)](https://pypi.org/project/pandas) using `pip`
+
+```
+pip install whatifact
+```
+
+To verify installation, try importing it:
+
+```
+import whatifact
+whatifact.__version__
+```
+
 ## Example
 
 In the most basic setting, whatifact only requries the data and a classifier.
@@ -47,6 +64,11 @@ app = whatifact(df=df, clf=clf)
 # INFO:     Application startup complete.
 # INFO:     Uvicorn running on http://<LOCAL_IP>:8000 (Press CTRL+C to quit)
 ```
+
+The output should look something like that:
+
+![Alt Text](resources/example.gif)
+
 
 However, when running the code above, you will notice a strange behavior.
 The sliders for both `age` and `fare` start at negative values, which is of cource non-sensical, the `parch` variable has no missing-value checkbox next to it, and the `sibsp` was considered as a continuous feature, but we'd rather handle it as categorical.
