@@ -67,7 +67,7 @@ app = whatifact(df=df, clf=clf)
 
 The output should look something like that:
 
-![til](./whatifact/resources/example.gif)
+![til](https://raw.githubusercontent.com/urigott/whatifact/084c7aa735e6db44149929094a1d987ebb5e7f39/whatifact/resources/example.gif)
 
 
 However, when running the code above, you will notice a strange behavior.
