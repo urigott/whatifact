@@ -7,7 +7,7 @@ from pathlib import Path
 from shiny import App, Inputs, Outputs, Session, ui, run_app
 
 from whatifact._widgets import _get_card_header
-from whatifact._utilities import _get_variables_and_widgets
+from whatifact._utilities import _get_variables_and_widgets, _is_running_in_jupyter
 from whatifact._inference import _prepare_everything
 from whatifact._server import whatifact_server
 
@@ -71,6 +71,10 @@ def whatifact(
         whatifact_server(inputs, outputs, session, variables, sample_id_type, df, clf)
 
     app = App(app_ui, app_server)
+
+    if _is_running_in_jupyter(): # support for Jupyter
+        import nest_asyncio
+        nest_asyncio.apply()        
 
     if run_application:
         run_app(app, launch_browser=True)

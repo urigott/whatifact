@@ -85,3 +85,24 @@ def _update_values(df, sample, variables):
             )
             if v["null"]:
                 ui.update_checkbox(var_id + "_null", value=~pd.isna(new_value))
+
+
+def _is_running_in_jupyter():
+    """
+    Returns True if the code is running inside a Jupyter notebook or JupyterLab,
+    False otherwise.
+    """
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell':
+            return True  # Jupyter notebook or qtconsole
+        elif shell == 'google.colab._shell.Shell':
+            return True #Google colab
+        elif shell == 'TerminalInteractiveShell':
+            return False  # Terminal running IPython
+        else:
+            return False  # Other IPython environments
+    except NameError:
+        return False  # Standard Python environment
+    except Exception: #Catch other errors, and return false.
+        return False
