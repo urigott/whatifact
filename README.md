@@ -67,7 +67,7 @@ app = whatifact(df=df, clf=clf)
 
 The output should look something like that:
 
-![Alt Text](resources/example.gif)
+![Alt Text](./resources/example.gif)
 
 
 However, when running the code above, you will notice a strange behavior.
